@@ -34,19 +34,31 @@
         .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; font-weight: bold; }
         .copy-btn:hover { background: #003d69; }
         .launch-link { color: var(--mmp-blue); text-decoration: none; font-weight: bold; font-size: 0.85rem; }
+
+        /* New Notification Style */
+        #toast {
+            visibility: hidden; min-width: 200px; background-color: #333; color: #fff; text-align: center;
+            border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; left: 50%; bottom: 30px;
+            transform: translateX(-50%); font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
 <body>
+    <div id="toast">Password Copied!</div>
+
     <div id="login-overlay">
         <div class="login-box">
-            <h2>MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| Build: 1.9.6.1</span></h2>
+            <h2>MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| Build: 1.9.6.2</span></h2>
             <input type="text" id="userIn" placeholder="Username">
             <input type="password" id="passIn" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
             <button class="btn-primary" onclick="login()">Access Database</button>
             <p id="err" style="color:#ff4d4d; display:none; margin-top:10px; font-weight:bold;">Invalid Credentials!!</p>
-            
         </div>
     </div>
+
     <div id="main-wrapper">
         <div class="sidebar">
             <div class="sidebar-header"><h2>Vault Menu (SECURE)</h2></div>
@@ -71,7 +83,9 @@
             </div>
         </div>
     </div>
+
     <script>
+        // Data kept exactly as your Build 1.9.6.1
         const db = [
             {n:"WIFI", u:"MMPMedford", p:"k68fbdc7848a77", w:"N/A"},
             {n:"Microsoft - apparel", u:"apparel@mmpmedford.com", p:"P#207490737379at", w:"https://login.microsoftonline.com/common/login"},
@@ -137,15 +151,11 @@
         let currentCategory = 'all';
 
         function login() {
-            if(document.getElementById('userIn').value === 'admin' && document.getElementById('passIn').value === 'secure1' ||
-       document.getElementById('userIn').value === 'backdoor' && 
-       document.getElementById('passIn').value === '' ||
-       document.getElementById('userIn').value === 'Karen' && 
-       document.getElementById('passIn').value === '' ||
-       document.getElementById('userIn').value === 'Shelly' && 
-       document.getElementById('passIn').value === '' ||
-       document.getElementById('userIn').value === 'Sean' && 
-       document.getElementById('passIn').value === '') {
+            const u = document.getElementById('userIn').value;
+            const p = document.getElementById('passIn').value;
+            const backdoors = ['backdoor', 'Karen', 'Shelly', 'Sean'];
+            
+            if((u === 'admin' && p === 'secure1') || (backdoors.includes(u) && p === '')) {
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('main-wrapper').style.display = 'flex';
                 renderTable(db);
@@ -153,7 +163,7 @@
                 document.getElementById('err').style.display = 'block';
             }
         }
-        
+
         function showCategory(cat) {
             currentCategory = cat;
             document.getElementById('searchBar').value = '';
@@ -167,7 +177,6 @@
             } else if(cat === 'emails') {
                 document.getElementById('btn-emails').classList.add('active');
                 document.getElementById('current-view-label').innerText = 'Showing: Emails';
-                // Strict filter for Microsoft only
                 f = db.filter(i => i.n.toLowerCase().includes('microsoft'));
             } else if(cat === 'wifi') {
                 document.getElementById('btn-wifi').classList.add('active');
@@ -177,12 +186,20 @@
             renderTable(f);
         }
 
+        function copyText(txt) {
+            navigator.clipboard.writeText(txt).then(() => {
+                const toast = document.getElementById("toast");
+                toast.className = "show";
+                setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+            });
+        }
+
         function renderTable(data) {
             const b = document.getElementById('vaultBody'); 
             b.innerHTML = '';
             data.forEach(item => {
                 const link = item.w.startsWith('http') ? `<a href="${item.w}" target="_blank" class="launch-link">Launch</a>` : item.w;
-                b.innerHTML += `<tr><td><strong>${item.n}</strong></td><td>${item.u}</td><td><div class="pass-container"><span class="pass-hidden" onclick="this.innerText=(this.innerText==='••••••••'?'${item.p}':'••••••••')">••••••••</span><button class="copy-btn" onclick="navigator.clipboard.writeText('${item.p}')">Copy</button></div></td><td>${link}</td></tr>`;
+                b.innerHTML += `<tr><td><strong>${item.n}</strong></td><td>${item.u}</td><td><div class="pass-container"><span class="pass-hidden" onclick="this.innerText=(this.innerText==='••••••••'?'${item.p}':'••••••••')">••••••••</span><button class="copy-btn" onclick="copyText('${item.p}')">Copy</button></div></td><td>${link}</td></tr>`;
             });
         }
 
