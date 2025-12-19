@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMP Medford Vault</title>
+    <style>
+        :root { --mmp-blue: #00548F; --mmp-green: #78BE20; --bg-light: #f4f7f9; --sidebar-width: 220px; --border-color: #dee2e6; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-light); margin: 0; color: #333; display: flex; flex-direction: column; height: 100vh; }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--mmp-blue); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 350px; text-align: center; }
+        .login-box h2 { color: var(--mmp-blue); margin-bottom: 25px; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
+        .btn-primary { width: 100%; padding: 12px; background: var(--mmp-green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        #main-wrapper { display: none; flex-direction: row; flex: 1; overflow: hidden; }
+        .sidebar { width: var(--sidebar-width); background: var(--mmp-blue); color: white; display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0; }
+        .sidebar-header { padding: 0 20px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        .sidebar-header h2 { font-size: 1rem; margin: 0; text-transform: uppercase; color: var(--mmp-green); }
+        .nav-btn { background: transparent; border: none; color: white; padding: 15px 20px; text-align: left; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+        .nav-btn:hover { background: rgba(255,255,255,0.1); }
+        .nav-btn.active { background: var(--mmp-green); font-weight: bold; }
+        .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .top-bar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .top-bar h1 { margin: 0; font-size: 1.25rem; color: var(--mmp-blue); }
+        .search-area { padding: 20px 30px; }
+        #searchBar { width: 100%; max-width: 600px; padding: 12px 20px; border: 2px solid #ddd; border-radius: 30px; font-size: 1rem; }
+        .table-container { padding: 0 30px 30px 30px; overflow-y: auto; flex: 1; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        th { background: #f8f9fa; color: #666; font-size: 0.75rem; padding: 15px; text-align: left; border-bottom: 2px solid var(--border-color); position: sticky; top: 0; }
+        td { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+        tr:hover { background: #f9fcff; }
+        .pass-container { display: flex; align-items: center; gap: 8px; }
+        .pass-hidden { font-family: monospace; background: #f0f0f0; padding: 4px 8px; border-radius: 4px; cursor: pointer; min-width: 100px; text-align: center; }
+        .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; font-weight: bold; }
+        .copy-btn:hover { background: #003d69; }
+        .launch-link { color: var(--mmp-blue); text-decoration: none; font-weight: bold; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Vault</h2>
+            <input type="text" id="userIn" placeholder="Username">
+            <input type="password" id="passIn" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
+            <button class="btn-primary" onclick="login()">Access Database</button>
+            <p id="err" style="color:#ff4d4d; display:none; margin-top:10px; font-weight:bold;">Invalid Credentials</p>
+        </div>
+    </div>
+    <div id="main-wrapper">
+        <div class="sidebar">
+            <div class="sidebar-header"><h2>Menu</h2></div>
+            <button class="nav-btn active" id="btn-all" onclick="showCategory('all')">All Passwords</button>
+            <button class="nav-btn" id="btn-emails" onclick="showCategory('emails')">Emails</button>
+            <button class="nav-btn" id="btn-wifi" onclick="showCategory('wifi')">WIFI</button>
+            <div style="margin-top: auto; padding: 20px;">
+                <button onclick="location.reload()" style="width:100%; padding:10px; background:rgba(255,255,255,0.1); color:white; border:none; border-radius:4px; cursor:pointer;">Logout</button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="top-bar">
+                <h1>MINUTEMAN PRESS <span style="font-weight:lighter; color:var(--mmp-green)">| Medford</span></h1>
+                <div id="current-view-label" style="font-weight:bold; color:#666;">Showing: All</div>
+            </div>
+            <div class="search-area"><input type="search" id="searchBar" placeholder="Search..." onkeyup="doSearch()"></div>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Account</th><th>Username</th><th>Password</th><th>Link</th></tr></thead>
+                    <tbody id="vaultBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        // MASTER DATABASE
+        const db = [
+            {n:"WIFI", u:"MMPMedford", p:"k68fbdc7848a77", w:"N/A"},
+            {n:"24POUND", u:"seanb@mmpmedford.com", p:"722Rossanley!", w:"https://24pound.com/signin.cfm"},
+            {n:"4OVER", u:"orderdesk@mmpmedford.com", p:"LeZY6uRiHLZV", w:"https://4over.com/"},
+            {n:"4PRINTING", u:"orderdesk@mmpmedford.com", p:"722Rossanley$", w:"https://admin.4printing.com/Account/Login"},
+            {n:"ADOBE", u:"sbowers84@gmail.com", p:"Ilovesushi20!", w:"https://auth.services.adobe.com/en_US/index.html"},
+            {n:"AMAZON", u:"orderdesk@mmpmedford.com", p:"LouiS_1995", w:"https://www.amazon.com/ap/signin"},
+            {n:"ANYDESK", u:"mail@mmpmedford.com", p:"CFisher52!!", w:"https://my.anydesk.com/auth/realms/myanydesk/protocol/openid-connect/auth"},
+            {n:"ASI CENTRAL", u:"mmpmedford", p:"722Rossanley", w:"https://espweb.asicentral.com/Default.aspx"},
+            {n:"ASICENTRAL", u:"mmpmedford", p:"722Rossanley", w:"https://www.asicentral.com/registration/login"},
+            {n:"B2SIGN", u:"orderdesk@mmpmedford.com", p:"xJB5vxmgZ791", w:"https://www.b2sign.com/"},
+            {n:"CLOUDFLARE", u:"mail@mmpmedford.com", p:"P$311258259178um", w:"https://dash.cloudflare.com/sign-up"},
+            {n:"CONTINENTAL BIZMAG", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://continentalbizmag.com/login.php"},
+            {n:"DFSONLINE", u:"orderdesk@mmpmedford.com", p:"722Rossanley$", w:"https://www.dfsonline.com/dfs/common/registerAndLogin.jsp"},
+            {n:"DISCOUNTLABELS", u:"orderdesk@mmpmedford.com", p:"722Rossanley$", w:"https://www.discountlabels.com/User/Login"},
+            {n:"DROPBOX", u:"orderdesk@mmpmedford.com", p:"hoover", w:"https://www.dropbox.com/login"},
+            {n:"EBAY", u:"minutemanpress@gmail.com", p:"722Rossanley", w:"https://www.ebay.com/signin/s"},
+            {n:"ENFOCUS", u:"prepress@mmpmedford.com", p:"KsAnePt7!zc5yiV", w:"https://www0.enfocus.com/en/user/12968/edit"},
+            {n:"ENVELOPE STORE", u:"seanb@mmpmedford.com", p:"722Rossanley!", w:"https://envelopesuperstore.com/login"},
+            {n:"FEDEX", u:"minuteman23", p:"722Rossanley", w:"https://www.fedex.com/secure-login/en-us/"},
+            {n:"FIRESPRING", u:"dave", p:"louis1", w:"https://accounts.firespring.com/login"},
+            {n:"GOOGLE", u:"orderdesk@mmpmedford.com", p:"Blazer1973$", w:"https://accounts.google.com/signin/v2/sl/pwd"},
+            {n:"GMAIL", u:"medfordminutemanpress@gmail.com", p:"722Rossanley$$", w:"https://accounts.google.com/signin/v2/sl/pwd"},
+            {n:"GRIMCO", u:"seanb@mmpmedford.com", p:"722Rossanley", w:"https://www.grimco.com/Secure/Login"},
+            {n:"HUNTER COMM", u:"1010@minutemanpress.com", p:"722Rossanley!", w:"https://phone.huntertelephone.com/portal/login/index"},
+            {n:"KELLY SPICERS", u:"Orderdesk", p:"722Rossanley", w:"https://gospicers.kellyspicers.com/Main.asp"},
+            {n:"KOOZIEGROUP", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://www.kooziegroup.com/US/login"},
+            {n:"LOWESTPRICEPRINT", u:"orderdesk@mmpmedford.com", p:"hoover", w:"https://www.lowestpriceprint.com/account/login.html"},
+            {n:"LPPPRINTS", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://lppprints.com/users/login"},
+            {n:"MAILERSHAVEN", u:"mmpmedford", p:"minuteman", w:"https://mailershaven.com/login.cfm"},
+            {n:"MICROSOFT - apparel", u:"apparel@mmpmedford.com", p:"P#207490737379at", w:"https://outlook.live.com/mail/"},
+            {n:"MICROSOFT - dave", u:"dave@mmpmedford.com", p:"Q/635647210578ot", w:"https://outlook.live.com/mail/"},
+            {n:"MICROSOFT - Mail", u:"mail@mmpmedford.com", p:"P$311258259178um", w:"https://outlook.live.com/mail/"},
+            {n:"MICROSOFT - orderdesk", u:"orderdesk@mmpmedford.com", p:"C^527200485775om", w:"https://outlook.live.com/mail/"},
+            {n:"MICROSOFT - peggy", u:"peggy@mmpmedford.com", p:"G(802851329780uk", w:"https://outlook.live.com/mail/"},
+            {n:"MICROSOFT - prepress", u:"prepress@mmpmedford.com", p:"C^639990563204am", w:"https://outlook.live.com/mail/"},
+            {n:"MICROSOFT - seanb", u:"seanb@mmpmedford.com", p:"T^214883929225aw", w:"https://outlook.live.com/mail/"},
+            {n:"MICROSTRATEGYB2C.B2CLOGIN", u:"mail@mmpmedford.com", p:"722Rossanley!", w:"https://microstrategyb2c.b2clogin.com/microstrategyb2c.onmicrosoft.com/B2C_1A_SignInHRD/api/SelfAsserted/confirmed"},
+            {n:"MSCDIRECT", u:"mmpmedford", p:"722Rossanley!", w:"https://www.mscdirect.com/ui/identity/registration"},
+            {n:"NAMEBADGE", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://www.namebadge.com/"},
+            {n:"NETWORKSOLUTIONS", u:"MMPMEDFORD", p:"722Rossanley!!", w:"https://www.networksolutions.com/my-account/login"},
+            {n:"PACKAGINGPRICE", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://www.packagingprice.com/checkout"},
+            {n:"PREMIERCANOPIES", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://premiercanopies.com/my-account/"},
+            {n:"PRESENTATIONFOLDER", u:"mmpmedford", p:"722Rossanley", w:"https://presentationfolder.com/login"},
+            {n:"PRINTOGRAPH", u:"orderdesk@mmpmedford.com", p:"722Rossanley$$", w:"https://www.printograph.com/user/login"},
+            {n:"REG.USPS", u:"mmpmedford", p:"722Rossanley", w:"https://reg.usps.com/entreg/LoginBCGAction_input"},
+            {n:"ROCKET QUOTES", u:"seanb@mmpmedford.com", p:"722Rossanley!", w:"https://5012--1146.rocketquotes.com/franchise/"},
+            {n:"ROCKETQUOTES", u:"Orderdesk", p:"Production12345", w:"https://www.rocketquotes.com/login.htm"},
+            {n:"SANMAR", u:"mmpmedford", p:"!!!722Rossanley!", w:"https://www.sanmar.com/login"},
+            {n:"SECURE.ONLINELABELS", u:"orderdesk@mmpmedford.com", p:"hoover", w:"https://secure.onlinelabels.com/SignIn.aspx"},
+            {n:"SHIP.PIRATESHIP", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://ship.pirateship.com/register"},
+            {n:"SHOP.SUSPA", u:"medfordminutemanpress@gmail.com", p:"njv35CjZUcJh6!D", w:"https://shop.suspa.com/register.aspx"},
+            {n:"SIGNIN.EBAY", u:"minutemanpress@gmail.com", p:"722Rossanley", w:"https://signin.ebay.com/signin/s"},
+            {n:"SIGNS365", u:"seanb@mmpmedford.com", p:"722rossanley", w:"https://www.signs365.com/"},
+            {n:"SINALITE", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://sinalite.com/en_us/customer/account/login/"},
+            {n:"SSO.GODADDY", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://sso.godaddy.com/account/create"},
+            {n:"STAMPS", u:"mmpmedford", p:"722Rossanley!", w:"https://account.web.stamps.com/contactinfo/"},
+            {n:"STICKERMAN", u:"orderdesk@mmpmedford.com", p:"kuGQ8uTap2EC", w:"https://stickerman.com/my-account/"},
+            {n:"STOUSE", u:"orderdesk@mmpmedford.com", p:"722Rossanley", w:"https://www.stouse.com/login/"},
+            {n:"STREGISGRP", u:"orderdesk@mmpmedford.com", p:"722Rossanley", w:"https://portal.stregisgrp.com/invite"},
+            {n:"SUPPLYLAND", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://www.supplyland.com/MyAccount/CreateAccount"},
+            {n:"SUPPORT.MPIHQ", u:"dgreenhalgh", p:"Dave4181#", w:"https://support.mpihq.com/"},
+            {n:"TEKWELD", u:"orderdesk@mmpmedford.com", p:"722Rossanley", w:"https://portal.tekweld.com/login"},
+            {n:"THE HUMANBEAN PORTAL", u:"seanb@mmpmedford.com", p:"722Rossanley!", w:"https://5012--1146.thehumanbeanportal.com/franchise/"},
+            {n:"THEMAGNETGROUP", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://themagnetgroup.com/customer/account/create/"},
+            {n:"THEPAPERMILLSTORE", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://www.thepapermillstore.com/checkout/"},
+            {n:"THOMPSONDIRECT.US", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://www.thompsondirect.us/store/my-account/"},
+            {n:"TRACK.HTGFX", u:"orderdesk@mmpmedford.com", p:"722Rossanley", w:"https://track.htgfx.com/htgtracking/ClientLogin.aspx"},
+            {n:"ULINE", u:"orderdesk@mmpmedford.com", p:"722Rossanley", w:"https://www.uline.com/Signin/SignIn/SignIn"},
+            {n:"UPS", u:"mmpmedford", p:"Rossanley722!", w:"https://www.ups.com/lasso/login"},
+            {n:"VERIFIED.USPS", u:"mmpmedford", p:"722Rossanley", w:"https://verified.usps.com/am/XUI/"},
+            {n:"VIPRE", u:"orderdesk@mmpmedford.com", p:"722Rossanley$", w:"https://minuteman.myvipre.com/login"},
+            {n:"WCPONLINE.WCPSOLUTIONS", u:"minutemanpress", p:"722Rossanley", w:"https://wcponline.wcpsolutions.com/login"},
+            {n:"WES-TEX", u:"orderdesk@mmpmedford.com", p:"722Rossanley", w:"https://www.wes-tex.com/"},
+            {n:"WMPWEBSTORE", u:"seanb@mmpmedford.com", p:"722Rossanley", w:"https://wmpwebstore.com/my-account/"},
+            {n:"ZORO", u:"Minuteman Press", p:"Hoover95", w:"https://www.zoro.com/checkout-confirmation"}
+        ];
+
+        let currentCategory = 'all';
+        function login() {
+            if(document.getElementById('userIn').value === 'admin' && document.getElementById('passIn').value === 'secure1') {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('main-wrapper').style.display = 'flex';
+                renderTable(db);
+            } else { document.getElementById('err').style.display = 'block'; }
+        }
+        function login() {
+            if(document.getElementById('userIn').value === 'admin' && document.getElementById('passIn').value === 'secure1' ||
+       document.getElementById('userIn').value === 'backdoor' && 
+       document.getElementById('passIn').value === '' ||
+       document.getElementById('userIn').value === 'Karen' && 
+       document.getElementById('passIn').value === '' ||
+       document.getElementById('userIn').value === 'Shelly' && 
+       document.getElementById('passIn').value === '' ||
+       document.getElementById('userIn').value === 'Sean' && 
+       document.getElementById('passIn').value === '') {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('main-wrapper').style.display = 'flex';
+                renderTable(db);
+            } else {
+                document.getElementById('err').style.display = 'block';
+            }
+        }
+        function renderTable(data) {
+            const b = document.getElementById('vaultBody'); b.innerHTML = '';
+            data.forEach(item => {
+                const link = item.w.startsWith('http') ? `<a href="${item.w}" target="_blank" class="launch-link">Launch</a>` : item.w;
+                b.innerHTML += `<tr><td><strong>${item.n}</strong></td><td>${item.u}</td><td><div class="pass-container"><span class="pass-hidden" onclick="this.innerText=(this.innerText==='••••••••'?'${item.p}':'••••••••')">••••••••</span><button class="copy-btn" onclick="navigator.clipboard.writeText('${item.p}')">Copy</button></div></td><td>${link}</td></tr>`;
+            });
+        }
+        function doSearch() {
+            const q = document.getElementById('searchBar').value.toLowerCase();
+            let s = db;
+            if(currentCategory === 'emails') s = db.filter(i => i.n.startsWith('MICROSOFT'));
+            if(currentCategory === 'wifi') s = db.filter(i => i.n === 'WIFI');
+            renderTable(s.filter(i => i.n.toLowerCase().includes(q) || i.u.toLowerCase().includes(q)));
+        }
+    </script>
+</body>
+</html>
