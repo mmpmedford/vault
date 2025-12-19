@@ -7,6 +7,20 @@
     <style>
         :root { --mmp-blue: #00548F; --mmp-green: #78BE20; --bg-light: #f4f7f9; --sidebar-width: 220px; --border-color: #dee2e6; }
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-light); margin: 0; color: #333; display: flex; flex-direction: column; height: 100vh; }
+        
+        /* Painfully Obvious Overlay */
+        #copy-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* Grays out the screen */
+            z-index: 5000; justify-content: center; align-items: center;
+        }
+        .copy-modal {
+            background: white; padding: 40px 60px; border-radius: 15px; text-align: center;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5); border-bottom: 8px solid var(--mmp-green);
+        }
+        .copy-modal h2 { color: var(--mmp-blue); margin: 0; font-size: 2rem; }
+        .copy-modal p { font-weight: bold; color: #666; margin-top: 10px; }
+
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--mmp-blue); display: flex; justify-content: center; align-items: center; z-index: 2000; }
         .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 350px; text-align: center; }
         .login-box h2 { color: var(--mmp-blue); margin-bottom: 25px; }
@@ -34,24 +48,19 @@
         .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; font-weight: bold; }
         .copy-btn:hover { background: #003d69; }
         .launch-link { color: var(--mmp-blue); text-decoration: none; font-weight: bold; font-size: 0.85rem; }
-
-        /* New Notification Style */
-        #toast {
-            visibility: hidden; min-width: 200px; background-color: #333; color: #fff; text-align: center;
-            border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; left: 50%; bottom: 30px;
-            transform: translateX(-50%); font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
 <body>
-    <div id="toast">Password Copied!</div>
+    <div id="copy-overlay">
+        <div class="copy-modal">
+            <h2>COPIED!</h2>
+            <p>Password is on your clipboard.</p>
+        </div>
+    </div>
 
     <div id="login-overlay">
         <div class="login-box">
-            <h2>MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| Build: 1.9.6.2</span></h2>
+            <h2>MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| Build: 1.9.6.3</span></h2>
             <input type="text" id="userIn" placeholder="Username">
             <input type="password" id="passIn" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
             <button class="btn-primary" onclick="login()">Access Database</button>
@@ -85,7 +94,6 @@
     </div>
 
     <script>
-        // Data kept exactly as your Build 1.9.6.1
         const db = [
             {n:"WIFI", u:"MMPMedford", p:"k68fbdc7848a77", w:"N/A"},
             {n:"Microsoft - apparel", u:"apparel@mmpmedford.com", p:"P#207490737379at", w:"https://login.microsoftonline.com/common/login"},
@@ -188,9 +196,9 @@
 
         function copyText(txt) {
             navigator.clipboard.writeText(txt).then(() => {
-                const toast = document.getElementById("toast");
-                toast.className = "show";
-                setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+                const overlay = document.getElementById("copy-overlay");
+                overlay.style.display = "flex"; // Show the gray-out and modal
+                setTimeout(() => { overlay.style.display = "none"; }, 800); // Hide after 0.8 seconds
             });
         }
 
