@@ -13,7 +13,7 @@
         .header-logo-container { width: 100%; background: white; padding: 15px 0; display: flex; justify-content: center; align-items: center; border-bottom: 2px solid var(--mmp-blue); flex-shrink: 0; z-index: 10; }
         .header-logo-container img { height: 75px; max-width: 400px; width: auto; object-fit: contain; }
 
-        /* DYNAMIC LOGIN BACKGROUND */
+        /* LOGIN BACKGROUND */
         #login-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(135deg, var(--mmp-orange), var(--mmp-blue));
@@ -21,38 +21,33 @@
             animation: gradientShift 10s ease infinite;
             display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; overflow: hidden;
         }
-
         @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        /* BUBBLES */
         .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; animation: float 8s infinite ease-in; z-index: 1; }
-        @keyframes float { 
-            0% { transform: translateY(0) translateX(0); opacity: 0; }
-            50% { opacity: 0.5; }
-            100% { transform: translateY(-120vh) translateX(50px); opacity: 0; }
-        }
+        @keyframes float { 0% { transform: translateY(0) translateX(0); opacity: 0; } 50% { opacity: 0.5; } 100% { transform: translateY(-120vh) translateX(50px); opacity: 0; } }
 
         .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 100%; max-width: 350px; text-align: center; z-index: 10; position: relative; }
         input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-size: 1rem; text-align: center; }
-        .btn-primary { width: 100%; padding: 12px; background: var(--mmp-green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: transform 0.2s; }
-        .btn-primary:active { transform: scale(0.98); }
+        
+        .btn-primary { width: 100%; padding: 12px; background: var(--mmp-green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
         .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
 
-        /* LOADING BAR */
-        .loader-container { width: 100%; background: #eee; height: 12px; border-radius: 6px; margin-top: 20px; display: none; overflow: hidden; position: relative; }
+        .loader-container { width: 100%; background: #eee; height: 12px; border-radius: 6px; margin-top: 20px; display: none; overflow: hidden; }
         .loader-fill { height: 100%; background: var(--mmp-blue); width: 0%; transition: width 2.5s linear; }
+        #granted-msg { display: none; margin-top: 15px; color: var(--mmp-green); font-weight: 900; font-size: 1.2rem; }
 
-        /* GRANTED ANIMATION */
-        #granted-msg { display: none; margin-top: 15px; color: var(--mmp-green); font-weight: 900; font-size: 1.2rem; letter-spacing: 1px; animation: pulse 0.5s infinite alternate; }
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
-
-        /* MAIN APP STYLES */
+        /* MAIN APP */
         #main-wrapper { display: none; flex-direction: row; flex: 1; overflow: hidden; }
         .sidebar { width: var(--sidebar-width); background: var(--mmp-blue); color: white; display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0; }
         .sidebar-header { padding: 0 20px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
         .nav-btn { background: transparent; border: none; color: white; padding: 15px 20px; text-align: left; font-size: 1rem; cursor: pointer; transition: all 0.2s; width: 100%; }
         .nav-btn:hover { background: rgba(255,255,255,0.1); }
         .nav-btn.active { background: var(--mmp-green); font-weight: bold; }
+        
+        /* SIDEBAR FOOTER BUTTONS */
+        .sidebar-footer { margin-top: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .refresh-btn { width:100%; padding:10px; background: rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.3); border-radius:4px; cursor:pointer; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
+        .refresh-btn:hover { background: rgba(255,255,255,0.2); }
         .logout-btn { width:100%; padding:12px; background: var(--mmp-green); color:white; border:none; border-radius:4px; cursor:pointer; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
 
         .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -62,19 +57,21 @@
         .search-area { padding: 20px 30px; flex-shrink: 0; }
         #searchBar { width: 100%; max-width: 600px; padding: 12px 20px; border: 2px solid #ddd; border-radius: 30px; font-size: 1rem; }
         
+        /* TABLE FIXES */
         .table-container { padding: 0 30px 30px 30px; overflow-y: auto; flex: 1; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; table-layout: fixed; }
         th { background: #f8f9fa; color: #666; font-size: 0.75rem; padding: 15px; text-align: left; border-bottom: 2px solid var(--border-color); position: sticky; top: 0; z-index: 10; }
-        td { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
-        tr:hover { background: #f9fcff; }
+        td { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
-        .val-text { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #444; }
-        .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
+        /* Fixed Position alignment for long passwords like GoDaddy */
+        .cell-flex { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+        .val-text { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #444; overflow: hidden; text-overflow: ellipsis; margin-right: 10px; }
+        
+        .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold; flex-shrink: 0; }
         .launch-link { color: var(--mmp-blue); text-decoration: none; font-weight: bold; font-size: 0.85rem; }
-        
-        /* COPIED OVERLAY */
+
         #copy-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 5000; justify-content: center; align-items: center; }
-        .copy-modal { background: white; padding: 40px; border-radius: 15px; text-align: center; border-bottom: 8px solid var(--mmp-green); }
+        .copy-modal { background: white; padding: 30px 50px; border-radius: 15px; text-align: center; }
     </style>
 </head>
 <body onload="createBubbles()">
@@ -87,18 +84,12 @@
     <div id="login-overlay">
         <div class="login-box">
             <h2 style="color:var(--mmp-blue); margin-bottom: 5px;">MMP Vault</h2>
-            <p style="margin: 0 0 20px 0; font-size: 0.8rem; color: #888;">BUILD 1.9.7.4</p>
-            
+            <p style="margin: 0 0 20px 0; font-size: 0.8rem; color: #888;">BUILD 1.9.7.5</p>
             <input type="text" id="userIn" placeholder="Enter Username" onkeypress="if(event.key==='Enter')handleLogin()">
             <button id="loginBtn" class="btn-primary" onclick="handleLogin()">Access Database</button>
-            
-            <div id="loader" class="loader-container">
-                <div id="loaderFill" class="loader-fill"></div>
-            </div>
-            
+            <div id="loader" class="loader-container"><div id="loaderFill" class="loader-fill"></div></div>
             <div id="granted-msg">✓ ACCESS GRANTED</div>
-
-            <p id="err" style="color:#ff4d4d; display:none; margin-top:10px; font-weight:bold;">Access Denied: Unknown User</p>
+            <p id="err" style="color:#ff4d4d; display:none; margin-top:10px; font-weight:bold;">Access Denied</p>
         </div>
     </div>
 
@@ -109,7 +100,9 @@
             <button class="nav-btn" id="btn-emails" onclick="showCategory('emails')">Emails</button>
             <button class="nav-btn" id="btn-wifi" onclick="showCategory('wifi')">WIFI</button>
             <button class="nav-btn" id="btn-gen" onclick="showCategory('gen')">Password Generator</button>
-            <div style="margin-top: auto; padding: 20px;">
+            
+            <div class="sidebar-footer">
+                <button onclick="refreshData()" class="refresh-btn" id="refreshBtn">Refresh Data</button>
                 <button onclick="location.reload()" class="logout-btn">LOGOUT</button>
             </div>
         </div>
@@ -118,22 +111,20 @@
                 <h1 style="color:var(--mmp-blue); font-size:1.1rem; text-transform:uppercase;">Medford Portal</h1>
                 <div id="current-view-label" style="font-weight:bold; color:#666;">Showing: All</div>
             </div>
-
             <div id="vault-view">
-                <div class="search-area"><input type="search" id="searchBar" placeholder="Search accounts, usernames, or passwords..." onkeyup="doSearch()"></div>
+                <div class="search-area"><input type="search" id="searchBar" placeholder="Search accounts..." onkeyup="doSearch()"></div>
                 <div class="table-container">
                     <table>
+                        <colgroup><col style="width: 25%"><col style="width: 30%"><col style="width: 30%"><col style="width: 15%"></colgroup>
                         <thead><tr><th>Account</th><th>Username</th><th>Password</th><th>Link</th></tr></thead>
                         <tbody id="vaultBody"></tbody>
                     </table>
                 </div>
             </div>
-
-            <div id="generator-view" style="display:none; overflow-y: auto;">
-                <div style="padding: 40px; max-width: 500px; background: white; margin: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <div id="generator-view" style="display:none; padding: 40px;">
+                <div style="max-width: 500px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                     <h3>Secure Password Generator</h3>
-                    <div id="genResult" style="font-size: 1.5rem; font-family: monospace; background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; color: var(--mmp-blue); word-break: break-all;">Click Generate</div>
-                    <label>Length: <input type="number" id="genLength" value="16" min="8" max="50" style="width:60px;"></label>
+                    <div id="genResult" style="font-size: 1.2rem; font-family: monospace; background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; word-break: break-all;">Click Generate</div>
                     <button class="btn-primary" onclick="generatePass()">Generate & Copy</button>
                 </div>
             </div>
@@ -212,8 +203,7 @@
                 let b = document.createElement('div');
                 b.className = 'bubble';
                 let size = Math.random() * 60 + 20 + 'px';
-                b.style.width = size;
-                b.style.height = size;
+                b.style.width = size; b.style.height = size;
                 b.style.left = Math.random() * 100 + '%';
                 b.style.animationDelay = Math.random() * 8 + 's';
                 overlay.appendChild(b);
@@ -222,85 +212,83 @@
 
         function handleLogin() {
             const u = document.getElementById('userIn').value;
-            const validUsers = ['admin', 'backdoor', 'Karen', 'Shelly', 'Sean'];
+            const valid = ['admin', 'backdoor', 'Karen', 'Shelly', 'Sean'];
             const btn = document.getElementById('loginBtn');
-            const err = document.getElementById('err');
             const loader = document.getElementById('loader');
             const fill = document.getElementById('loaderFill');
             const granted = document.getElementById('granted-msg');
 
-            err.style.display = 'none';
-
-            if(validUsers.includes(u)) {
+            if(valid.includes(u)) {
                 btn.disabled = true;
                 loader.style.display = 'block';
                 setTimeout(() => { fill.style.width = '100%'; }, 50);
-                
-                // 2.5 second loading bar duration
                 setTimeout(() => {
                     loader.style.display = 'none';
                     granted.style.display = 'block';
-                    
-                    // Show "Access Granted" for 1 second before opening
                     setTimeout(() => {
                         document.getElementById('login-overlay').style.display = 'none';
                         document.getElementById('main-wrapper').style.display = 'flex';
                         renderTable(db);
                     }, 1000);
                 }, 2550);
-            } else { 
-                err.style.display = 'block'; 
-            }
+            } else { document.getElementById('err').style.display = 'block'; }
+        }
+
+        function refreshData() {
+            const rb = document.getElementById('refreshBtn');
+            rb.innerText = 'Refreshing...';
+            setTimeout(() => {
+                renderTable(db);
+                rb.innerText = 'Refresh Data';
+            }, 600);
         }
 
         function showCategory(cat) {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('btn-' + (cat==='gen'?'gen':cat)).classList.add('active');
-            if(cat === 'gen') {
-                document.getElementById('vault-view').style.display = 'none';
-                document.getElementById('generator-view').style.display = 'block';
-                document.getElementById('current-view-label').innerText = 'Showing: Password Generator';
-            } else {
-                document.getElementById('vault-view').style.display = 'flex';
-                document.getElementById('generator-view').style.display = 'none';
+            const vv = document.getElementById('vault-view'), gv = document.getElementById('generator-view');
+            if(cat === 'gen') { vv.style.display = 'none'; gv.style.display = 'block'; }
+            else {
+                vv.style.display = 'flex'; gv.style.display = 'none';
                 let f = db;
                 if(cat === 'emails') f = db.filter(i => i.n.toLowerCase().includes('microsoft'));
                 if(cat === 'wifi') f = db.filter(i => i.n === 'WIFI');
-                document.getElementById('current-view-label').innerText = 'Showing: ' + cat.charAt(0).toUpperCase() + cat.slice(1);
                 renderTable(f);
             }
         }
 
-        function generatePass() {
-            const length = document.getElementById('genLength').value;
-            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
-            let retVal = "";
-            for (let i = 0, n = charset.length; i < length; ++i) {
-                retVal += charset.charAt(Math.floor(Math.random() * n));
-            }
-            document.getElementById('genResult').innerText = retVal;
-            copyText(retVal);
-        }
-
         function copyText(txt) {
             navigator.clipboard.writeText(txt).then(() => {
-                const overlay = document.getElementById("copy-overlay");
-                overlay.style.display = "flex";
-                setTimeout(() => { overlay.style.display = "none"; }, 800);
+                const o = document.getElementById("copy-overlay");
+                o.style.display = "flex";
+                setTimeout(() => { o.style.display = "none"; }, 800);
             });
         }
 
         function renderTable(data) {
             const b = document.getElementById('vaultBody'); b.innerHTML = '';
             data.forEach(item => {
-                const link = item.w.startsWith('http') ? `<a href="${item.w}" target="_blank" class="launch-link">Launch Site</a>` : item.w;
-                b.innerHTML += `<tr><td><strong>${item.n}</strong></td><td><span class="val-text">${item.u}</span></td><td><div class="cell-data" style="display:flex; justify-content:space-between; align-items:center;"><span class="val-text">${item.p}</span><button class="copy-btn" onclick="copyText('${item.p}')">Copy</button></div></td><td>${link}</td></tr>`;
+                const link = item.w.startsWith('http') ? `<a href="${item.w}" target="_blank" class="launch-link">Launch</a>` : item.w;
+                b.innerHTML += `<tr>
+                    <td><strong>${item.n}</strong></td>
+                    <td><div class="cell-flex"><span class="val-text">${item.u}</span><button class="copy-btn" onclick="copyText('${item.u}')">User</button></div></td>
+                    <td><div class="cell-flex"><span class="val-text">${item.p}</span><button class="copy-btn" onclick="copyText('${item.p}')">Pass</button></div></td>
+                    <td>${link}</td>
+                </tr>`;
             });
         }
 
         function doSearch() {
             const q = document.getElementById('searchBar').value.toLowerCase();
             renderTable(db.filter(i => i.n.toLowerCase().includes(q) || i.u.toLowerCase().includes(q) || i.p.toLowerCase().includes(q)));
+        }
+
+        function generatePass() {
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let ret = "";
+            for (let i = 0; i < 16; ++i) ret += charset.charAt(Math.floor(Math.random() * charset.length));
+            document.getElementById('genResult').innerText = ret;
+            copyText(ret);
         }
     </script>
 </body>
