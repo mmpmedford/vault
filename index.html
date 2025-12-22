@@ -8,6 +8,7 @@
         :root { --mmp-blue: #00548F; --mmp-green: #78BE20; --bg-light: #f4f7f9; --sidebar-width: 220px; --border-color: #dee2e6; }
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-light); margin: 0; color: #333; display: flex; flex-direction: column; height: 100vh; }
         
+        /* Painfully Obvious Overlay */
         #copy-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 5000; justify-content: center; align-items: center; }
         .copy-modal { background: white; padding: 40px 60px; border-radius: 15px; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5); border-bottom: 8px solid var(--mmp-green); }
         .copy-modal h2 { color: var(--mmp-blue); margin: 0; font-size: 2.5rem; }
@@ -31,6 +32,7 @@
         .top-bar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .top-bar h1 { margin: 0; font-size: 1.25rem; color: var(--mmp-blue); }
         
+        /* Generator View */
         #generator-ui { padding: 40px; max-width: 500px; background: white; margin: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .gen-display { font-size: 1.5rem; font-family: monospace; background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; color: var(--mmp-blue); word-break: break-all; }
         .gen-controls label { display: block; margin: 10px 0; font-weight: bold; }
@@ -55,7 +57,7 @@
 
     <div id="login-overlay">
         <div class="login-box">
-            <h2>MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| Build: 1.9.6.6</span></h2>
+            <h2>MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| Build: 1.9.6.7</span></h2>
             <input type="text" id="userIn" placeholder="Username">
             <input type="password" id="passIn" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
             <button class="btn-primary" onclick="login()">Access Database</button>
@@ -81,7 +83,7 @@
             </div>
 
             <div id="vault-view">
-                <div class="search-area"><input type="search" id="searchBar" placeholder="Search accounts..." onkeyup="doSearch()"></div>
+                <div class="search-area"><input type="search" id="searchBar" placeholder="Search accounts, usernames, or passwords..." onkeyup="doSearch()"></div>
                 <div class="table-container">
                     <table>
                         <thead><tr><th>Account</th><th>Username</th><th>Password</th><th>Link</th></tr></thead>
@@ -244,9 +246,17 @@
         function doSearch() {
             const q = document.getElementById('searchBar').value.toLowerCase();
             let s = db;
+            
+            // First apply category filter
             if(currentCategory === 'emails') s = db.filter(i => i.n.toLowerCase().includes('microsoft'));
             if(currentCategory === 'wifi') s = db.filter(i => i.n === 'WIFI');
-            renderTable(s.filter(i => i.n.toLowerCase().includes(q) || i.u.toLowerCase().includes(q)));
+            
+            // Then apply text search (Now including Password .p)
+            renderTable(s.filter(i => 
+                i.n.toLowerCase().includes(q) || 
+                i.u.toLowerCase().includes(q) || 
+                i.p.toLowerCase().includes(q)
+            ));
         }
     </script>
 </body>
