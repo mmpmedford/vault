@@ -5,33 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MMP Vault</title>
     <style>
-        :root { --mmp-blue: #00548F; --mmp-green: #78BE20; --bg-light: #f4f7f9; --sidebar-width: 220px; --border-color: #dee2e6; }
+        :root { --mmp-blue: #00548F; --mmp-green: #78BE20; --mmp-orange: #FF8C00; --bg-light: #f4f7f9; --sidebar-width: 220px; --border-color: #dee2e6; }
         
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-light); margin: 0; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        .header-logo-container { width: 100%; background: white; padding: 15px 0; display: flex; justify-content: center; align-items: center; border-bottom: 2px solid var(--mmp-blue); flex-shrink: 0; }
+        /* HEADER LOGO */
+        .header-logo-container { width: 100%; background: white; padding: 15px 0; display: flex; justify-content: center; align-items: center; border-bottom: 2px solid var(--mmp-blue); flex-shrink: 0; z-index: 10; }
         .header-logo-container img { height: 75px; max-width: 400px; width: auto; object-fit: contain; }
 
-        #copy-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 5000; justify-content: center; align-items: center; }
-        .copy-modal { background: white; padding: 40px 60px; border-radius: 15px; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5); border-bottom: 8px solid var(--mmp-green); }
-        .copy-modal h2 { color: var(--mmp-blue); margin: 0; font-size: 2.5rem; }
+        /* DYNAMIC LOGIN BACKGROUND */
+        #login-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(135deg, var(--mmp-orange), var(--mmp-blue));
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease infinite;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; overflow: hidden;
+        }
 
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--mmp-blue); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; }
-        .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 350px; text-align: center; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* BUBBLES */
+        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; animation: float 8s infinite ease-in; z-index: 1; }
+        @keyframes float { 
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-120vh) translateX(50px); opacity: 0; }
+        }
+
+        .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 100%; max-width: 350px; text-align: center; z-index: 10; position: relative; }
         input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-size: 1rem; text-align: center; }
-        .btn-primary { width: 100%; padding: 12px; background: var(--mmp-green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .btn-primary { width: 100%; padding: 12px; background: var(--mmp-green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: transform 0.2s; }
+        .btn-primary:active { transform: scale(0.98); }
         .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
 
-        .loader-container { width: 100%; background: #eee; height: 10px; border-radius: 5px; margin-top: 20px; display: none; overflow: hidden; }
-        .loader-fill { height: 100%; background: var(--mmp-blue); width: 0%; transition: width 4s linear; }
-        
+        /* LOADING BAR */
+        .loader-container { width: 100%; background: #eee; height: 12px; border-radius: 6px; margin-top: 20px; display: none; overflow: hidden; position: relative; }
+        .loader-fill { height: 100%; background: var(--mmp-blue); width: 0%; transition: width 2.5s linear; }
+
+        /* GRANTED ANIMATION */
+        #granted-msg { display: none; margin-top: 15px; color: var(--mmp-green); font-weight: 900; font-size: 1.2rem; letter-spacing: 1px; animation: pulse 0.5s infinite alternate; }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+        /* MAIN APP STYLES */
         #main-wrapper { display: none; flex-direction: row; flex: 1; overflow: hidden; }
         .sidebar { width: var(--sidebar-width); background: var(--mmp-blue); color: white; display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0; }
         .sidebar-header { padding: 0 20px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
         .nav-btn { background: transparent; border: none; color: white; padding: 15px 20px; text-align: left; font-size: 1rem; cursor: pointer; transition: all 0.2s; width: 100%; }
         .nav-btn:hover { background: rgba(255,255,255,0.1); }
         .nav-btn.active { background: var(--mmp-green); font-weight: bold; }
-        
         .logout-btn { width:100%; padding:12px; background: var(--mmp-green); color:white; border:none; border-radius:4px; cursor:pointer; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
 
         .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -50,24 +71,32 @@
         .val-text { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #444; }
         .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
         .launch-link { color: var(--mmp-blue); text-decoration: none; font-weight: bold; font-size: 0.85rem; }
+        
+        /* COPIED OVERLAY */
+        #copy-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 5000; justify-content: center; align-items: center; }
+        .copy-modal { background: white; padding: 40px; border-radius: 15px; text-align: center; border-bottom: 8px solid var(--mmp-green); }
     </style>
 </head>
-<body>
+<body onload="createBubbles()">
     <div class="header-logo-container">
         <img src="MMP2015-Logo-New-Slogan.png" alt="Minuteman Press Medford">
     </div>
 
-    <div id="copy-overlay"><div class="copy-modal"><h2>COPIED!</h2></div></div>
+    <div id="copy-overlay"><div class="copy-modal"><h2 style="color:var(--mmp-blue)">COPIED!</h2></div></div>
 
     <div id="login-overlay">
         <div class="login-box">
-            <h2 style="color:var(--mmp-blue)">MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| 1.9.7.3</span></h2>
+            <h2 style="color:var(--mmp-blue); margin-bottom: 5px;">MMP Vault</h2>
+            <p style="margin: 0 0 20px 0; font-size: 0.8rem; color: #888;">BUILD 1.9.7.4</p>
+            
             <input type="text" id="userIn" placeholder="Enter Username" onkeypress="if(event.key==='Enter')handleLogin()">
             <button id="loginBtn" class="btn-primary" onclick="handleLogin()">Access Database</button>
             
             <div id="loader" class="loader-container">
                 <div id="loaderFill" class="loader-fill"></div>
             </div>
+            
+            <div id="granted-msg">✓ ACCESS GRANTED</div>
 
             <p id="err" style="color:#ff4d4d; display:none; margin-top:10px; font-weight:bold;">Access Denied: Unknown User</p>
         </div>
@@ -177,6 +206,20 @@
             {n:"zoro.com", u:"Minuteman Press", p:"Hoover95", w:"https://www.zoro.com/"}
         ];
 
+        function createBubbles() {
+            const overlay = document.getElementById('login-overlay');
+            for(let i=0; i<15; i++) {
+                let b = document.createElement('div');
+                b.className = 'bubble';
+                let size = Math.random() * 60 + 20 + 'px';
+                b.style.width = size;
+                b.style.height = size;
+                b.style.left = Math.random() * 100 + '%';
+                b.style.animationDelay = Math.random() * 8 + 's';
+                overlay.appendChild(b);
+            }
+        }
+
         function handleLogin() {
             const u = document.getElementById('userIn').value;
             const validUsers = ['admin', 'backdoor', 'Karen', 'Shelly', 'Sean'];
@@ -184,6 +227,7 @@
             const err = document.getElementById('err');
             const loader = document.getElementById('loader');
             const fill = document.getElementById('loaderFill');
+            const granted = document.getElementById('granted-msg');
 
             err.style.display = 'none';
 
@@ -191,11 +235,19 @@
                 btn.disabled = true;
                 loader.style.display = 'block';
                 setTimeout(() => { fill.style.width = '100%'; }, 50);
+                
+                // 2.5 second loading bar duration
                 setTimeout(() => {
-                    document.getElementById('login-overlay').style.display = 'none';
-                    document.getElementById('main-wrapper').style.display = 'flex';
-                    renderTable(db);
-                }, 4050);
+                    loader.style.display = 'none';
+                    granted.style.display = 'block';
+                    
+                    // Show "Access Granted" for 1 second before opening
+                    setTimeout(() => {
+                        document.getElementById('login-overlay').style.display = 'none';
+                        document.getElementById('main-wrapper').style.display = 'flex';
+                        renderTable(db);
+                    }, 1000);
+                }, 2550);
             } else { 
                 err.style.display = 'block'; 
             }
