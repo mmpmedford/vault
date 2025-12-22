@@ -6,55 +6,51 @@
     <title>MMP Vault</title>
     <style>
         :root { --mmp-blue: #00548F; --mmp-green: #78BE20; --bg-light: #f4f7f9; --sidebar-width: 220px; --border-color: #dee2e6; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-light); margin: 0; color: #333; display: flex; flex-direction: column; height: 100vh; }
         
-        /* HEADER LOGO STYLING */
-        .header-logo-container { width: 100%; background: white; padding: 15px 0; display: flex; justify-content: center; align-items: center; border-bottom: 2px solid var(--mmp-blue); }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-light); margin: 0; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        .header-logo-container { width: 100%; background: white; padding: 15px 0; display: flex; justify-content: center; align-items: center; border-bottom: 2px solid var(--mmp-blue); flex-shrink: 0; }
         .header-logo-container img { height: 75px; max-width: 400px; width: auto; object-fit: contain; }
 
         #copy-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 5000; justify-content: center; align-items: center; }
         .copy-modal { background: white; padding: 40px 60px; border-radius: 15px; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5); border-bottom: 8px solid var(--mmp-green); }
         .copy-modal h2 { color: var(--mmp-blue); margin: 0; font-size: 2.5rem; }
-        .copy-modal p { font-weight: bold; color: #666; margin-top: 10px; font-size: 1.2rem; }
 
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--mmp-blue); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; }
         .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 350px; text-align: center; }
-        .login-box h2 { color: var(--mmp-blue); margin-bottom: 25px; }
         input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
         .btn-primary { width: 100%; padding: 12px; background: var(--mmp-green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* LOADING BAR STYLES */
+        .loader-container { width: 100%; background: #eee; height: 10px; border-radius: 5px; margin-top: 20px; display: none; overflow: hidden; }
+        .loader-fill { height: 100%; background: var(--mmp-blue); width: 0%; transition: width 4s linear; }
         
         #main-wrapper { display: none; flex-direction: row; flex: 1; overflow: hidden; }
         .sidebar { width: var(--sidebar-width); background: var(--mmp-blue); color: white; display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0; }
         .sidebar-header { padding: 0 20px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .sidebar-header h2 { font-size: 1rem; margin: 0; text-transform: uppercase; color: var(--mmp-green); }
-        .nav-btn { background: transparent; border: none; color: white; padding: 15px 20px; text-align: left; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; width: 100%; }
+        .nav-btn { background: transparent; border: none; color: white; padding: 15px 20px; text-align: left; font-size: 1rem; cursor: pointer; transition: all 0.2s; width: 100%; }
         .nav-btn:hover { background: rgba(255,255,255,0.1); }
         .nav-btn.active { background: var(--mmp-green); font-weight: bold; }
         
-        /* UPDATED LOGOUT BUTTON */
-        .logout-btn { width:100%; padding:12px; background: var(--mmp-green); color:white; border:none; border-radius:4px; cursor:pointer; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; transition: opacity 0.2s; }
-        .logout-btn:hover { opacity: 0.9; }
+        .logout-btn { width:100%; padding:12px; background: var(--mmp-green); color:white; border:none; border-radius:4px; cursor:pointer; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
 
         .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .top-bar { background: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
-        .top-bar h1 { margin: 0; font-size: 1.1rem; color: var(--mmp-blue); text-transform: uppercase; letter-spacing: 1px; }
+        .top-bar { background: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
         
-        #generator-ui { padding: 40px; max-width: 500px; background: white; margin: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .gen-display { font-size: 1.5rem; font-family: monospace; background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; color: var(--mmp-blue); word-break: break-all; }
-
-        .search-area { padding: 20px 30px; }
+        #vault-view { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+        .search-area { padding: 20px 30px; flex-shrink: 0; }
         #searchBar { width: 100%; max-width: 600px; padding: 12px 20px; border: 2px solid #ddd; border-radius: 30px; font-size: 1rem; }
+        
         .table-container { padding: 0 30px 30px 30px; overflow-y: auto; flex: 1; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        th { background: #f8f9fa; color: #666; font-size: 0.75rem; padding: 15px; text-align: left; border-bottom: 2px solid var(--border-color); position: sticky; top: 0; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        th { background: #f8f9fa; color: #666; font-size: 0.75rem; padding: 15px; text-align: left; border-bottom: 2px solid var(--border-color); position: sticky; top: 0; z-index: 10; }
         td { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
         tr:hover { background: #f9fcff; }
         
-        .cell-data { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .val-text { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #444; }
         .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
-        .launch-link { color: var(--mmp-blue); text-decoration: none; font-weight: bold; font-size: 0.85rem; border-bottom: 1px solid transparent; }
-        .launch-link:hover { border-bottom: 1px solid var(--mmp-blue); }
+        .launch-link { color: var(--mmp-blue); text-decoration: none; font-weight: bold; font-size: 0.85rem; }
     </style>
 </head>
 <body>
@@ -66,17 +62,22 @@
 
     <div id="login-overlay">
         <div class="login-box">
-            <h2>MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| 1.9.6.1</span></h2>
+            <h2 style="color:var(--mmp-blue)">MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| 1.9.6.1</span></h2>
             <input type="text" id="userIn" placeholder="Username">
-            <input type="password" id="passIn" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
-            <button class="btn-primary" onclick="login()">Access Database</button>
+            <input type="password" id="passIn" placeholder="Password" onkeypress="if(event.key==='Enter')handleLogin()">
+            <button id="loginBtn" class="btn-primary" onclick="handleLogin()">Access Database</button>
+            
+            <div id="loader" class="loader-container">
+                <div id="loaderFill" class="loader-fill"></div>
+            </div>
+
             <p id="err" style="color:#ff4d4d; display:none; margin-top:10px; font-weight:bold;">Invalid Credentials!!</p>
         </div>
     </div>
 
     <div id="main-wrapper">
         <div class="sidebar">
-            <div class="sidebar-header"><h2>Vault Menu</h2></div>
+            <div class="sidebar-header"><h2 style="font-size:1rem; color:var(--mmp-green); text-transform:uppercase;">Vault Menu</h2></div>
             <button class="nav-btn active" id="btn-all" onclick="showCategory('all')">All Passwords</button>
             <button class="nav-btn" id="btn-emails" onclick="showCategory('emails')">Emails</button>
             <button class="nav-btn" id="btn-wifi" onclick="showCategory('wifi')">WIFI</button>
@@ -87,7 +88,7 @@
         </div>
         <div class="content">
             <div class="top-bar">
-                <h1>Medford Portal</h1>
+                <h1 style="color:var(--mmp-blue); font-size:1.1rem; text-transform:uppercase;">Medford Portal</h1>
                 <div id="current-view-label" style="font-weight:bold; color:#666;">Showing: All</div>
             </div>
 
@@ -101,15 +102,11 @@
                 </div>
             </div>
 
-            <div id="generator-view" style="display:none;">
-                <div id="generator-ui">
+            <div id="generator-view" style="display:none; overflow-y: auto;">
+                <div style="padding: 40px; max-width: 500px; background: white; margin: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                     <h3>Secure Password Generator</h3>
-                    <div class="gen-display" id="genResult">Click Generate</div>
-                    <div class="gen-controls">
-                        <label>Length: <input type="number" id="genLength" value="16" min="8" max="50" style="width:60px;"></label>
-                        <label><input type="checkbox" id="genNum" checked> Include Numbers</label>
-                        <label><input type="checkbox" id="genSym" checked> Include Symbols</label>
-                    </div>
+                    <div id="genResult" style="font-size: 1.5rem; font-family: monospace; background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; color: var(--mmp-blue); word-break: break-all;">Click Generate</div>
+                    <label>Length: <input type="number" id="genLength" value="16" min="8" max="50" style="width:60px;"></label>
                     <button class="btn-primary" onclick="generatePass()">Generate & Copy</button>
                 </div>
             </div>
@@ -119,16 +116,16 @@
     <script>
         const db = [
             {n:"WIFI", u:"MMPMedford", p:"k68fbdc7848a77", w:"N/A"},
-            {n:"Microsoft - apparel", u:"apparel@mmpmedford.com", p:"P#207490737379at", w:"https://login.microsoftonline.com/common/login"},
-            {n:"Microsoft - dave", u:"dave@mmpmedford.com", p:"Q/635647210578ot", w:"https://login.microsoftonline.com/common/login"},
-            {n:"Microsoft - mail", u:"mail@mmpmedford.com", p:"P$311258259178um", w:"https://login.microsoftonline.com/common/login"},
-            {n:"Microsoft - orderdesk", u:"orderdesk@mmpmedford.com", p:"C^527200485775om", w:"https://login.microsoftonline.com/common/login"},
-            {n:"Microsoft - peggy", u:"peggy@mmpmedford.com", p:"G(802851329780uk", w:"https://login.microsoftonline.com/common/login"},
-            {n:"Microsoft - prepress", u:"prepress@mmpmedford.com", p:"C^639990563204am", w:"https://login.microsoftonline.com/common/login"},
-            {n:"Microsoft - seanb", u:"seanb@mmpmedford.com", p:"T^214883929225aw", w:"https://login.microsoftonline.com/common/login"},
+            {n:"Microsoft - apparel", u:"apparel@mmpmedford.com", p:"P#207490737379at", w:"https://login.microsoftonline.com/"},
+            {n:"Microsoft - dave", u:"dave@mmpmedford.com", p:"Q/635647210578ot", w:"https://login.microsoftonline.com/"},
+            {n:"Microsoft - mail", u:"mail@mmpmedford.com", p:"P$311258259178um", w:"https://login.microsoftonline.com/"},
+            {n:"Microsoft - orderdesk", u:"orderdesk@mmpmedford.com", p:"C^527200485775om", w:"https://login.microsoftonline.com/"},
+            {n:"Microsoft - peggy", u:"peggy@mmpmedford.com", p:"G(802851329780uk", w:"https://login.microsoftonline.com/"},
+            {n:"Microsoft - prepress", u:"prepress@mmpmedford.com", p:"C^639990563204am", w:"https://login.microsoftonline.com/"},
+            {n:"Microsoft - seanb", u:"seanb@mmpmedford.com", p:"T^214883929225aw", w:"https://login.microsoftonline.com/"},
             {n:"24pound.com", u:"seanb@mmpmedford.com", p:"722Rossanley!", w:"https://24pound.com/signin.cfm"},
             {n:"4over.com", u:"orderdesk@mmpmedford.com", p:"LeZY6uRiHLZV", w:"https://4over.com/"},
-            {n:"amazon.com", u:"orderdesk@mmpmedford.com", p:"LouiS_1995", w:"https://www.amazon.com/ap/signin"},
+            {n:"amazon.com", u:"orderdesk@mmpmedford.com", p:"LouiS_1995", w:"https://www.amazon.com/"},
             {n:"anydesk.com", u:"mail@mmpmedford.com", p:"CFisher52!!", w:"https://myanydesk.com/"},
             {n:"asicentral.com", u:"mmpmedford", p:"722Rossanley", w:"https://espweb.asicentral.com/"},
             {n:"b2sign.com", u:"orderdesk@mmpmedford.com", p:"xJB5vxmgZ791", w:"https://www.b2sign.com/"},
@@ -136,7 +133,7 @@
             {n:"continentalbizmag.com", u:"orderdesk@mmpmedford.com", p:"722Rossanley!", w:"https://continentalbizmag.com/"},
             {n:"dfsonline.com", u:"orderdesk@mmpmedford.com", p:"722Rossanley$", w:"https://www.dfsonline.com/"},
             {n:"discountlabels.com", u:"orderdesk@mmpmedford.com", p:"722Rossanley$", w:"https://www.discountlabels.com/"},
-            {n:"dropbox.com", u:"orderdesk@mmpmedford.com", p:")m^n1w7K9NRtu&X8", w:"https://www.dropbox.com/login"},
+            {n:"dropbox.com", u:"orderdesk@mmpmedford.com", p:")m^n1w7K9NRtu&X8", w:"https://www.dropbox.com/"},
             {n:"ebay.com", u:"minutemanpress@gmail.com", p:"722Rossanley", w:"https://www.ebay.com/"},
             {n:"enfocus.com", u:"prepress@mmpmedford.com", p:"KsAnePt7!zc5yiV", w:"https://www.enfocus.com/"},
             {n:"fedex.com", u:"minuteman23", p:"722Rossanley", w:"https://www.fedex.com/"},
@@ -182,21 +179,37 @@
             {n:"zoro.com", u:"Minuteman Press", p:"Hoover95", w:"https://www.zoro.com/"}
         ];
 
-        let currentCategory = 'all';
-
-        function login() {
+        function handleLogin() {
             const u = document.getElementById('userIn').value;
             const p = document.getElementById('passIn').value;
             const backdoors = ['backdoor', 'Karen', 'Shelly', 'Sean'];
+            const btn = document.getElementById('loginBtn');
+            const err = document.getElementById('err');
+            const loader = document.getElementById('loader');
+            const fill = document.getElementById('loaderFill');
+
+            err.style.display = 'none';
+
             if((u === 'admin' && p === 'secure1') || (backdoors.includes(u) && p === '')) {
-                document.getElementById('login-overlay').style.display = 'none';
-                document.getElementById('main-wrapper').style.display = 'flex';
-                renderTable(db);
-            } else { document.getElementById('err').style.display = 'block'; }
+                // START LOADING SEQUENCE
+                btn.disabled = true;
+                loader.style.display = 'block';
+                
+                // Trigger animation
+                setTimeout(() => { fill.style.width = '100%'; }, 50);
+
+                // Wait 4 seconds then login
+                setTimeout(() => {
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.getElementById('main-wrapper').style.display = 'flex';
+                    renderTable(db);
+                }, 4050);
+            } else { 
+                err.style.display = 'block'; 
+            }
         }
 
         function showCategory(cat) {
-            currentCategory = cat;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('btn-' + (cat==='gen'?'gen':cat)).classList.add('active');
             if(cat === 'gen') {
@@ -204,7 +217,7 @@
                 document.getElementById('generator-view').style.display = 'block';
                 document.getElementById('current-view-label').innerText = 'Showing: Password Generator';
             } else {
-                document.getElementById('vault-view').style.display = 'block';
+                document.getElementById('vault-view').style.display = 'flex';
                 document.getElementById('generator-view').style.display = 'none';
                 let f = db;
                 if(cat === 'emails') f = db.filter(i => i.n.toLowerCase().includes('microsoft'));
@@ -237,16 +250,13 @@
             const b = document.getElementById('vaultBody'); b.innerHTML = '';
             data.forEach(item => {
                 const link = item.w.startsWith('http') ? `<a href="${item.w}" target="_blank" class="launch-link">Launch Site</a>` : item.w;
-                b.innerHTML += `<tr><td><strong>${item.n}</strong></td><td><span class="val-text">${item.u}</span></td><td><div class="cell-data"><span class="val-text">${item.p}</span><button class="copy-btn" onclick="copyText('${item.p}')">Copy</button></div></td><td>${link}</td></tr>`;
+                b.innerHTML += `<tr><td><strong>${item.n}</strong></td><td><span class="val-text">${item.u}</span></td><td><div class="cell-data" style="display:flex; justify-content:space-between; align-items:center;"><span class="val-text">${item.p}</span><button class="copy-btn" onclick="copyText('${item.p}')">Copy</button></div></td><td>${link}</td></tr>`;
             });
         }
 
         function doSearch() {
             const q = document.getElementById('searchBar').value.toLowerCase();
-            let s = db;
-            if(currentCategory === 'emails') s = db.filter(i => i.n.toLowerCase().includes('microsoft'));
-            if(currentCategory === 'wifi') s = db.filter(i => i.n === 'WIFI');
-            renderTable(s.filter(i => i.n.toLowerCase().includes(q) || i.u.toLowerCase().includes(q) || i.p.toLowerCase().includes(q)));
+            renderTable(db.filter(i => i.n.toLowerCase().includes(q) || i.u.toLowerCase().includes(q) || i.p.toLowerCase().includes(q)));
         }
     </script>
 </body>
