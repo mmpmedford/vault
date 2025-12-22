@@ -31,7 +31,6 @@
         .top-bar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .top-bar h1 { margin: 0; font-size: 1.25rem; color: var(--mmp-blue); }
         
-        /* Generator Styling */
         #generator-ui { padding: 40px; max-width: 500px; background: white; margin: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .gen-display { font-size: 1.5rem; font-family: monospace; background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; color: var(--mmp-blue); word-break: break-all; }
         .gen-controls label { display: block; margin: 10px 0; font-weight: bold; }
@@ -46,16 +45,17 @@
         
         .cell-data { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .val-text { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #444; }
-        .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; font-weight: bold; }
-        .launch-link { color: var(--mmp-blue); text-decoration: none; font-weight: bold; font-size: 0.85rem; }
+        .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
+        .launch-link { color: var(--mmp-blue); text-decoration: none; font-weight: bold; font-size: 0.85rem; border-bottom: 1px solid transparent; }
+        .launch-link:hover { border-bottom: 1px solid var(--mmp-blue); }
     </style>
 </head>
 <body>
-    <div id="copy-overlay"><div class="copy-modal"><h2>COPIED!</h2><p>Data is now on your clipboard.</p></div></div>
+    <div id="copy-overlay"><div class="copy-modal"><h2>COPIED!</h2><p>Password is now on your clipboard.</p></div></div>
 
     <div id="login-overlay">
         <div class="login-box">
-            <h2>MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| Build: 1.9.6.5</span></h2>
+            <h2>MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| Build: 1.9.6.6</span></h2>
             <input type="text" id="userIn" placeholder="Username">
             <input type="password" id="passIn" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
             <button class="btn-primary" onclick="login()">Access Database</button>
@@ -81,7 +81,7 @@
             </div>
 
             <div id="vault-view">
-                <div class="search-area"><input type="search" id="searchBar" placeholder="Search accounts or usernames..." onkeyup="doSearch()"></div>
+                <div class="search-area"><input type="search" id="searchBar" placeholder="Search accounts..." onkeyup="doSearch()"></div>
                 <div class="table-container">
                     <table>
                         <thead><tr><th>Account</th><th>Username</th><th>Password</th><th>Link</th></tr></thead>
@@ -226,7 +226,18 @@
             const b = document.getElementById('vaultBody'); b.innerHTML = '';
             data.forEach(item => {
                 const link = item.w.startsWith('http') ? `<a href="${item.w}" target="_blank" class="launch-link">Launch Site</a>` : item.w;
-                b.innerHTML += `<tr><td><strong>${item.n}</strong></td><td><div class="cell-data"><span class="val-text">${item.u}</span><button class="copy-btn" onclick="copyText('${item.u}')">Copy</button></div></td><td><div class="cell-data"><span class="val-text">${item.p}</span><button class="copy-btn" onclick="copyText('${item.p}')">Copy</button></div></td><td>${link}</td></tr>`;
+                b.innerHTML += `
+                    <tr>
+                        <td><strong>${item.n}</strong></td>
+                        <td><span class="val-text">${item.u}</span></td>
+                        <td>
+                            <div class="cell-data">
+                                <span class="val-text">${item.p}</span>
+                                <button class="copy-btn" onclick="copyText('${item.p}')">Copy</button>
+                            </div>
+                        </td>
+                        <td>${link}</td>
+                    </tr>`;
             });
         }
 
