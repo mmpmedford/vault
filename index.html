@@ -11,21 +11,22 @@
         /* Painfully Obvious Overlay */
         #copy-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); /* Grays out the screen */
+            background: rgba(0, 0, 0, 0.7); 
             z-index: 5000; justify-content: center; align-items: center;
         }
         .copy-modal {
             background: white; padding: 40px 60px; border-radius: 15px; text-align: center;
             box-shadow: 0 0 30px rgba(0,0,0,0.5); border-bottom: 8px solid var(--mmp-green);
         }
-        .copy-modal h2 { color: var(--mmp-blue); margin: 0; font-size: 2rem; }
-        .copy-modal p { font-weight: bold; color: #666; margin-top: 10px; }
+        .copy-modal h2 { color: var(--mmp-blue); margin: 0; font-size: 2.5rem; }
+        .copy-modal p { font-weight: bold; color: #666; margin-top: 10px; font-size: 1.2rem; }
 
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--mmp-blue); display: flex; justify-content: center; align-items: center; z-index: 2000; }
         .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 350px; text-align: center; }
         .login-box h2 { color: var(--mmp-blue); margin-bottom: 25px; }
         input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
         .btn-primary { width: 100%; padding: 12px; background: var(--mmp-green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        
         #main-wrapper { display: none; flex-direction: row; flex: 1; overflow: hidden; }
         .sidebar { width: var(--sidebar-width); background: var(--mmp-blue); color: white; display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0; }
         .sidebar-header { padding: 0 20px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
@@ -33,30 +34,28 @@
         .nav-btn { background: transparent; border: none; color: white; padding: 15px 20px; text-align: left; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; width: 100%; }
         .nav-btn:hover { background: rgba(255,255,255,0.1); }
         .nav-btn.active { background: var(--mmp-green); font-weight: bold; }
+        
         .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .top-bar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .top-bar h1 { margin: 0; font-size: 1.25rem; color: var(--mmp-blue); }
         .search-area { padding: 20px 30px; }
         #searchBar { width: 100%; max-width: 600px; padding: 12px 20px; border: 2px solid #ddd; border-radius: 30px; font-size: 1rem; }
+        
         .table-container { padding: 0 30px 30px 30px; overflow-y: auto; flex: 1; }
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         th { background: #f8f9fa; color: #666; font-size: 0.75rem; padding: 15px; text-align: left; border-bottom: 2px solid var(--border-color); position: sticky; top: 0; }
         td { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
         tr:hover { background: #f9fcff; }
-        .pass-container { display: flex; align-items: center; gap: 8px; }
-        .pass-hidden { font-family: monospace; background: #f0f0f0; padding: 4px 8px; border-radius: 4px; cursor: pointer; min-width: 100px; text-align: center; }
-        .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; font-weight: bold; }
+        
+        .cell-data { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .val-text { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #444; }
+        .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; font-weight: bold; flex-shrink: 0; }
         .copy-btn:hover { background: #003d69; }
         .launch-link { color: var(--mmp-blue); text-decoration: none; font-weight: bold; font-size: 0.85rem; }
     </style>
 </head>
 <body>
-    <div id="copy-overlay">
-        <div class="copy-modal">
-            <h2>COPIED !</h2>
-            <p>Password is on your clipboard.</p>
-        </div>
-    </div>
+    <div id="copy-overlay"><div class="copy-modal"><h2>COPIED!</h2><p>Data is now on your clipboard.</p></div></div>
 
     <div id="login-overlay">
         <div class="login-box">
@@ -70,7 +69,7 @@
 
     <div id="main-wrapper">
         <div class="sidebar">
-            <div class="sidebar-header"><h2>Vault Menu (SECURE)</h2></div>
+            <div class="sidebar-header"><h2>Vault Menu</h2></div>
             <button class="nav-btn active" id="btn-all" onclick="showCategory('all')">All Passwords</button>
             <button class="nav-btn" id="btn-emails" onclick="showCategory('emails')">Emails</button>
             <button class="nav-btn" id="btn-wifi" onclick="showCategory('wifi')">WIFI</button>
@@ -83,7 +82,7 @@
                 <h1>MINUTEMAN PRESS <span style="font-weight:lighter">| Medford</span></h1>
                 <div id="current-view-label" style="font-weight:bold; color:#666;">Showing: All</div>
             </div>
-            <div class="search-area"><input type="search" id="searchBar" placeholder="Search..." onkeyup="doSearch()"></div>
+            <div class="search-area"><input type="search" id="searchBar" placeholder="Search accounts or usernames..." onkeyup="doSearch()"></div>
             <div class="table-container">
                 <table>
                     <thead><tr><th>Account</th><th>Username</th><th>Password</th><th>Link</th></tr></thead>
@@ -96,13 +95,13 @@
     <script>
         const db = [
             {n:"WIFI", u:"MMPMedford", p:"k68fbdc7848a77", w:"N/A"},
-            {n:"Microsoft - apparel", u:"apparel@mmpmedford.com", p:"P#207490737379at", w:"https://outlook.com/mail/"},
-            {n:"Microsoft - dave", u:"dave@mmpmedford.com", p:"Q/635647210578ot", w:"https://outlook.com/mail/"},
-            {n:"Microsoft - mail", u:"mail@mmpmedford.com", p:"P$311258259178um", w:"https://outlook.com/mail/"},
-            {n:"Microsoft - orderdesk", u:"orderdesk@mmpmedford.com", p:"C^527200485775om", w:"https://outlook.com/mail/"},
-            {n:"Microsoft - peggy", u:"peggy@mmpmedford.com", p:"G(802851329780uk", w:"https://outlook.com/mail/"},
-            {n:"Microsoft - prepress", u:"prepress@mmpmedford.com", p:"C^639990563204am", w:"https://outlook.com/mail/"},
-            {n:"Microsoft - seanb", u:"seanb@mmpmedford.com", p:"T^214883929225aw", w:"https://outlook.com/mail/"},
+            {n:"Microsoft - apparel", u:"apparel@mmpmedford.com", p:"P#207490737379at", w:"https://login.microsoftonline.com/common/login"},
+            {n:"Microsoft - dave", u:"dave@mmpmedford.com", p:"Q/635647210578ot", w:"https://login.microsoftonline.com/common/login"},
+            {n:"Microsoft - mail", u:"mail@mmpmedford.com", p:"P$311258259178um", w:"https://login.microsoftonline.com/common/login"},
+            {n:"Microsoft - orderdesk", u:"orderdesk@mmpmedford.com", p:"C^527200485775om", w:"https://login.microsoftonline.com/common/login"},
+            {n:"Microsoft - peggy", u:"peggy@mmpmedford.com", p:"G(802851329780uk", w:"https://login.microsoftonline.com/common/login"},
+            {n:"Microsoft - prepress", u:"prepress@mmpmedford.com", p:"C^639990563204am", w:"https://login.microsoftonline.com/common/login"},
+            {n:"Microsoft - seanb", u:"seanb@mmpmedford.com", p:"T^214883929225aw", w:"https://login.microsoftonline.com/common/login"},
             {n:"24pound.com", u:"seanb@mmpmedford.com", p:"722Rossanley!", w:"https://24pound.com/signin.cfm"},
             {n:"4over.com", u:"orderdesk@mmpmedford.com", p:"LeZY6uRiHLZV", w:"https://4over.com/"},
             {n:"amazon.com", u:"orderdesk@mmpmedford.com", p:"LouiS_1995", w:"https://www.amazon.com/ap/signin"},
@@ -162,43 +161,30 @@
             const u = document.getElementById('userIn').value;
             const p = document.getElementById('passIn').value;
             const backdoors = ['backdoor', 'Karen', 'Shelly', 'Sean'];
-            
             if((u === 'admin' && p === 'secure1') || (backdoors.includes(u) && p === '')) {
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('main-wrapper').style.display = 'flex';
                 renderTable(db);
-            } else {
-                document.getElementById('err').style.display = 'block';
-            }
+            } else { document.getElementById('err').style.display = 'block'; }
         }
 
         function showCategory(cat) {
             currentCategory = cat;
             document.getElementById('searchBar').value = '';
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
-            let f = [];
-            if(cat === 'all') {
-                document.getElementById('btn-all').classList.add('active');
-                document.getElementById('current-view-label').innerText = 'Showing: All';
-                f = db;
-            } else if(cat === 'emails') {
-                document.getElementById('btn-emails').classList.add('active');
-                document.getElementById('current-view-label').innerText = 'Showing: Emails';
-                f = db.filter(i => i.n.toLowerCase().includes('microsoft'));
-            } else if(cat === 'wifi') {
-                document.getElementById('btn-wifi').classList.add('active');
-                document.getElementById('current-view-label').innerText = 'Showing: WIFI';
-                f = db.filter(i => i.n === 'WIFI');
-            }
+            let f = db;
+            if(cat === 'emails') f = db.filter(i => i.n.toLowerCase().includes('microsoft'));
+            if(cat === 'wifi') f = db.filter(i => i.n === 'WIFI');
+            document.getElementById('btn-' + cat).classList.add('active');
+            document.getElementById('current-view-label').innerText = 'Showing: ' + cat.charAt(0).toUpperCase() + cat.slice(1);
             renderTable(f);
         }
 
         function copyText(txt) {
             navigator.clipboard.writeText(txt).then(() => {
                 const overlay = document.getElementById("copy-overlay");
-                overlay.style.display = "flex"; // Show the gray-out and modal
-                setTimeout(() => { overlay.style.display = "none"; }, 800); // Hide after 0.8 seconds
+                overlay.style.display = "flex";
+                setTimeout(() => { overlay.style.display = "none"; }, 800);
             });
         }
 
@@ -206,8 +192,24 @@
             const b = document.getElementById('vaultBody'); 
             b.innerHTML = '';
             data.forEach(item => {
-                const link = item.w.startsWith('http') ? `<a href="${item.w}" target="_blank" class="launch-link">Launch</a>` : item.w;
-                b.innerHTML += `<tr><td><strong>${item.n}</strong></td><td>${item.u}</td><td><div class="pass-container"><span class="pass-hidden" onclick="this.innerText=(this.innerText==='••••••••'?'${item.p}':'••••••••')">••••••••</span><button class="copy-btn" onclick="copyText('${item.p}')">Copy</button></div></td><td>${link}</td></tr>`;
+                const link = item.w.startsWith('http') ? `<a href="${item.w}" target="_blank" class="launch-link">Launch Site</a>` : item.w;
+                b.innerHTML += `
+                    <tr>
+                        <td><strong>${item.n}</strong></td>
+                        <td>
+                            <div class="cell-data">
+                                <span class="val-text">${item.u}</span>
+                                <button class="copy-btn" onclick="copyText('${item.u}')">Copy</button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-data">
+                                <span class="val-text">${item.p}</span>
+                                <button class="copy-btn" onclick="copyText('${item.p}')">Copy</button>
+                            </div>
+                        </td>
+                        <td>${link}</td>
+                    </tr>`;
             });
         }
 
