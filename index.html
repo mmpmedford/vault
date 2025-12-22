@@ -18,11 +18,10 @@
 
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--mmp-blue); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; }
         .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 350px; text-align: center; }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-size: 1rem; text-align: center; }
         .btn-primary { width: 100%; padding: 12px; background: var(--mmp-green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
         .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
 
-        /* LOADING BAR STYLES */
         .loader-container { width: 100%; background: #eee; height: 10px; border-radius: 5px; margin-top: 20px; display: none; overflow: hidden; }
         .loader-fill { height: 100%; background: var(--mmp-blue); width: 0%; transition: width 4s linear; }
         
@@ -58,20 +57,19 @@
         <img src="MMP2015-Logo-New-Slogan.png" alt="Minuteman Press Medford">
     </div>
 
-    <div id="copy-overlay"><div class="copy-modal"><h2>COPIED!</h2><p>Password is now on your clipboard.</p></div></div>
+    <div id="copy-overlay"><div class="copy-modal"><h2>COPIED!</h2></div></div>
 
     <div id="login-overlay">
         <div class="login-box">
-            <h2 style="color:var(--mmp-blue)">MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| 1.9.6.1</span></h2>
-            <input type="text" id="userIn" placeholder="Username">
-            <input type="password" id="passIn" placeholder="Password" onkeypress="if(event.key==='Enter')handleLogin()">
+            <h2 style="color:var(--mmp-blue)">MMP Vault <span style="font-weight:lighter; color:var(--mmp-green)">| 1.9.7.3</span></h2>
+            <input type="text" id="userIn" placeholder="Enter Username" onkeypress="if(event.key==='Enter')handleLogin()">
             <button id="loginBtn" class="btn-primary" onclick="handleLogin()">Access Database</button>
             
             <div id="loader" class="loader-container">
                 <div id="loaderFill" class="loader-fill"></div>
             </div>
 
-            <p id="err" style="color:#ff4d4d; display:none; margin-top:10px; font-weight:bold;">Invalid Credentials!!</p>
+            <p id="err" style="color:#ff4d4d; display:none; margin-top:10px; font-weight:bold;">Access Denied: Unknown User</p>
         </div>
     </div>
 
@@ -181,8 +179,7 @@
 
         function handleLogin() {
             const u = document.getElementById('userIn').value;
-            const p = document.getElementById('passIn').value;
-            const backdoors = ['backdoor', 'Karen', 'Shelly', 'Sean'];
+            const validUsers = ['admin', 'backdoor', 'Karen', 'Shelly', 'Sean'];
             const btn = document.getElementById('loginBtn');
             const err = document.getElementById('err');
             const loader = document.getElementById('loader');
@@ -190,15 +187,10 @@
 
             err.style.display = 'none';
 
-            if((u === 'admin' && p === 'secure1') || (backdoors.includes(u) && p === '')) {
-                // START LOADING SEQUENCE
+            if(validUsers.includes(u)) {
                 btn.disabled = true;
                 loader.style.display = 'block';
-                
-                // Trigger animation
                 setTimeout(() => { fill.style.width = '100%'; }, 50);
-
-                // Wait 4 seconds then login
                 setTimeout(() => {
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('main-wrapper').style.display = 'flex';
