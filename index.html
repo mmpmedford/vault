@@ -9,7 +9,6 @@
         
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-light); margin: 0; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        /* HEADER LOGO */
         .header-logo-container { width: 100%; background: white; padding: 15px 0; display: flex; justify-content: center; align-items: center; border-bottom: 2px solid var(--mmp-blue); flex-shrink: 0; z-index: 10; }
         .header-logo-container img { height: 75px; max-width: 400px; width: auto; object-fit: contain; }
 
@@ -44,10 +43,8 @@
         .nav-btn:hover { background: rgba(255,255,255,0.1); }
         .nav-btn.active { background: var(--mmp-green); font-weight: bold; }
         
-        /* SIDEBAR FOOTER BUTTONS */
         .sidebar-footer { margin-top: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
         .refresh-btn { width:100%; padding:10px; background: rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.3); border-radius:4px; cursor:pointer; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
-        .refresh-btn:hover { background: rgba(255,255,255,0.2); }
         .logout-btn { width:100%; padding:12px; background: var(--mmp-green); color:white; border:none; border-radius:4px; cursor:pointer; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
 
         .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -57,17 +54,16 @@
         .search-area { padding: 20px 30px; flex-shrink: 0; }
         #searchBar { width: 100%; max-width: 600px; padding: 12px 20px; border: 2px solid #ddd; border-radius: 30px; font-size: 1rem; }
         
-        /* TABLE FIXES */
         .table-container { padding: 0 30px 30px 30px; overflow-y: auto; flex: 1; }
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; table-layout: fixed; }
         th { background: #f8f9fa; color: #666; font-size: 0.75rem; padding: 15px; text-align: left; border-bottom: 2px solid var(--border-color); position: sticky; top: 0; z-index: 10; }
         td { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
-        /* Fixed Position alignment for long passwords like GoDaddy */
         .cell-flex { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .val-text { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #444; overflow: hidden; text-overflow: ellipsis; margin-right: 10px; }
         
-        .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold; flex-shrink: 0; }
+        .copy-btn { background: var(--mmp-blue); color: white; border: none; padding: 6px 10px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; font-weight: bold; flex-shrink: 0; min-width: 50px; }
+        .copy-btn:hover { background: #004070; }
         .launch-link { color: var(--mmp-blue); text-decoration: none; font-weight: bold; font-size: 0.85rem; }
 
         #copy-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 5000; justify-content: center; align-items: center; }
@@ -84,7 +80,7 @@
     <div id="login-overlay">
         <div class="login-box">
             <h2 style="color:var(--mmp-blue); margin-bottom: 5px;">MMP Vault</h2>
-            <p style="margin: 0 0 20px 0; font-size: 0.8rem; color: #888;">BUILD 1.9.7.5</p>
+            <p style="margin: 0 0 20px 0; font-size: 0.8rem; color: #888;">BUILD 1.9.7.6</p>
             <input type="text" id="userIn" placeholder="Enter Username" onkeypress="if(event.key==='Enter')handleLogin()">
             <button id="loginBtn" class="btn-primary" onclick="handleLogin()">Access Database</button>
             <div id="loader" class="loader-container"><div id="loaderFill" class="loader-fill"></div></div>
@@ -144,7 +140,6 @@
             {n:"24pound.com", u:"seanb@mmpmedford.com", p:"722Rossanley!", w:"https://24pound.com/signin.cfm"},
             {n:"4over.com", u:"orderdesk@mmpmedford.com", p:"LeZY6uRiHLZV", w:"https://4over.com/"},
             {n:"amazon.com", u:"orderdesk@mmpmedford.com", p:"LouiS_1995", w:"https://www.amazon.com/"},
-            {n:"anydesk.com", u:"mail@mmpmedford.com", p:"CFisher52!!", w:"https://myanydesk.com/"},
             {n:"asicentral.com", u:"mmpmedford", p:"722Rossanley", w:"https://espweb.asicentral.com/"},
             {n:"b2sign.com", u:"orderdesk@mmpmedford.com", p:"xJB5vxmgZ791", w:"https://www.b2sign.com/"},
             {n:"cloudflare.com", u:"mail@mmpmedford.com", p:"P$311258259178um", w:"https://dash.cloudflare.com/"},
@@ -271,8 +266,8 @@
                 const link = item.w.startsWith('http') ? `<a href="${item.w}" target="_blank" class="launch-link">Launch</a>` : item.w;
                 b.innerHTML += `<tr>
                     <td><strong>${item.n}</strong></td>
-                    <td><div class="cell-flex"><span class="val-text">${item.u}</span><button class="copy-btn" onclick="copyText('${item.u}')">User</button></div></td>
-                    <td><div class="cell-flex"><span class="val-text">${item.p}</span><button class="copy-btn" onclick="copyText('${item.p}')">Pass</button></div></td>
+                    <td><div class="cell-flex"><span class="val-text">${item.u}</span><button class="copy-btn" onclick="copyText('${item.u}')">COPY</button></div></td>
+                    <td><div class="cell-flex"><span class="val-text">${item.p}</span><button class="copy-btn" onclick="copyText('${item.p}')">COPY</button></div></td>
                     <td>${link}</td>
                 </tr>`;
             });
