@@ -50,6 +50,27 @@
         .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .top-bar { background: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
         
+        /* FLASHING SECURE BADGE */
+        .secure-badge {
+            background-color: var(--mmp-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            animation: slowFlash 2.5s infinite ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        @keyframes slowFlash {
+            0% { opacity: 1; box-shadow: 0 0 12px rgba(120, 190, 32, 0.8); }
+            50% { opacity: 0.35; box-shadow: 0 0 2px rgba(120, 190, 32, 0.2); }
+            100% { opacity: 1; box-shadow: 0 0 12px rgba(120, 190, 32, 0.8); }
+        }
+
         #vault-view { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
         .search-area { padding: 20px 30px; flex-shrink: 0; }
         #searchBar { width: 100%; max-width: 600px; padding: 12px 20px; border: 2px solid #ddd; border-radius: 30px; font-size: 1rem; }
@@ -105,7 +126,8 @@
         </div>
         <div class="content">
             <div class="top-bar">
-                <h1 style="color:var(--mmp-blue); font-size:1.1rem; text-transform:uppercase;">Medford Portal</h1>
+                <h1 style="color:var(--mmp-blue); font-size:1.1rem; text-transform:uppercase; margin:0;">Medford Portal</h1>
+                <div class="secure-badge">🔒 SECURE</div>
                 <div id="current-view-label" style="font-weight:bold; color:#666;">Showing: All</div>
             </div>
             <div id="vault-view">
